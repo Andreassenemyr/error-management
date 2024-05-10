@@ -1,9 +1,15 @@
 {
   "name": "@ribban/error-management",
-  "version": "1.0.1",
-  "main": "index.js",
+  "version": "1.0.2",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsup",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -19,5 +25,12 @@
   },
   "homepage": "https://github.com/Andreassenemyr/error-management#readme",
   "description": "",
-  "types": "./index.d.ts"
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2"
+  },
+  "dependencies": {
+    "tsup": "^8.0.2"
+  }
 }
