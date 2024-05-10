@@ -1,7 +1,6 @@
 {
-  "name": "error-management",
+  "name": "@ribban/error-management",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -18,5 +17,7 @@
   "bugs": {
     "url": "https://github.com/Andreassenemyr/error-management/issues"
   },
-  "homepage": "https://github.com/Andreassenemyr/error-management#readme"
+  "homepage": "https://github.com/Andreassenemyr/error-management#readme",
+  "description": "",
+  "types": "./index.d.ts"
 }
