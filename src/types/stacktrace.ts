@@ -35,16 +35,13 @@ export function createStackParser(...parsers: StackLineParser[]): StackParser {
             // Ignore lines over 1kb as they are unlikely to be stack frames.
             // Many of the regular expressions use backtracking which results in run time that increases exponentially with
             // input size. Huge strings can result in hangs/Denial of Service:
-            // https://github.com/getsentry/sentry-javascript/issues/2286
             if (line.length > 1024) {
               continue;
             }
           
-            // https://github.com/getsentry/sentry-javascript/issues/5459
             // Remove webpack (error: *) wrappers
             const cleanedLine = WEBPACK_ERROR_REGEXP.test(line) ? line.replace(WEBPACK_ERROR_REGEXP, '$1') : line;
           
-            // https://github.com/getsentry/sentry-javascript/issues/7813
             // Skip Error: lines
             if (cleanedLine.match(/\S*Error: /)) {
               continue;
@@ -64,11 +61,11 @@ export function createStackParser(...parsers: StackLineParser[]): StackParser {
             }
         }
       
-        return stripSentryFramesAndReverse(frames.slice(framesToPop));
+        return stripRibbanFramesAndReverse(frames.slice(framesToPop));
     };
 }
 
-export function stripSentryFramesAndReverse(stack: ReadonlyArray<StackFrame>): StackFrame[] {
+export function stripRibbanFramesAndReverse(stack: ReadonlyArray<StackFrame>): StackFrame[] {
     if (!stack.length) {
         return [];
     }
@@ -76,7 +73,7 @@ export function stripSentryFramesAndReverse(stack: ReadonlyArray<StackFrame>): S
     const localStack = Array.from(stack);
   
     // If stack starts with one of our API calls, remove it (starts, meaning it's the top of the stack - aka last call)
-    if (/sentryWrapped/.test(localStack[localStack.length - 1].function || '')) {
+    if (/ribbanWrapped/.test(localStack[localStack.length - 1].function || '')) {
         localStack.pop();
     }
   
@@ -87,13 +84,13 @@ export function stripSentryFramesAndReverse(stack: ReadonlyArray<StackFrame>): S
     if (STRIP_FRAME_REGEXP.test(localStack[localStack.length - 1].function || '')) {
         localStack.pop();
         
-        // When using synthetic events, we will have a 2 levels deep stack, as `new Error('Sentry syntheticException')`
+        // When using synthetic events, we will have a 2 levels deep stack, as `new Error('Ribban syntheticException')`
         // is produced within the hub itself, making it:
         //
-        //   Sentry.captureException()
+        //   Ribban.captureException()
         //   getCurrentHub().captureException()
         //
-        // instead of just the top `Sentry` call itself.
+        // instead of just the top `Ribban` call itself.
         // This forces us to possibly strip an additional frame in the exact same was as above.
         if (STRIP_FRAME_REGEXP.test(localStack[localStack.length - 1].function || '')) {
           localStack.pop();

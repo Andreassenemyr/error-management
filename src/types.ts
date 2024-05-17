@@ -128,7 +128,7 @@ export interface Event {
     tags?: { [key: string]: Primitive };
     extra?: Extras;
     type?: EventType;
-    // A place to stash data which is needed at some point in the SDK's event processing pipeline but which shouldn't get sent to Sentry
+    // A place to stash data which is needed at some point in the SDK's event processing pipeline but which shouldn't get sent to Ribban
     sdkProcessingMetadata?: { [key: string]: any };
 }
 

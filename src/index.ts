@@ -38,6 +38,8 @@ export interface Scope {
 
     clear(): this;
 
+    update(captureContext?: CaptureContext);
+
     /**
      * Returns the `RequestSession` if there is one
      */

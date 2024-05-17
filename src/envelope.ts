@@ -121,7 +121,7 @@ export function createEventEnvelope(
     const envelopeHeaders = createEventEnvelopeHeaders(event, tunnel, dsn);
 
     // Prevent this data (which, if it exists, was used in earlier steps in the processing pipeline) from being sent to
-    // sentry. (Note: Our use of this property comes and goes with whatever we might be debugging, whatever hacks we may
+    // Ribban. (Note: Our use of this property comes and goes with whatever we might be debugging, whatever hacks we may
     // have temporarily added, etc. Even if we don't happen to be using it at some point in the future, let's not get rid
     // of this `delete`, lest we miss putting it back in the next time the property is in use.)
     delete event.sdkProcessingMetadata;

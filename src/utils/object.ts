@@ -47,6 +47,14 @@ function dropUndefinedKeysInner<T>(inputValue: T, memoizationMap: Map<unknown, u
     return inputValue;
 };
 
+export function isDOMException(wat: unknown): boolean {
+    return isBuiltin(wat, 'DOMException');
+}
+
+export function isDOMError(wat: unknown): boolean {
+    return isBuiltin(wat, 'DOMError');
+}
+
 function isRecord(input: unknown): input is Record<string, unknown> {
     if (!isPlainObject(input)) {
         return false;

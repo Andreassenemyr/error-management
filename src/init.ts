@@ -1,50 +1,48 @@
 import { defaultStackParser } from "./api";
-import { Client, NodeClient } from "./client";
+import { BrowserClient, BrowserClientOptions, BrowserOptions, Client, setCurrentClient } from "./client";
 import { getCurrentScope } from "./current-scopes";
+import { ClientOptions } from "./options";
+import { makeFetchTransport } from "./transport/fetch";
 import { makeNodeTransport } from "./transport/http";
 import { NodeClientOptions, NodeOptions } from "./types";
 import { stackParserFromStackParserOptions } from "./types/stacktrace";
 import { logger } from "./utils/logger";
 import { dropUndefinedKeys } from "./utils/object";
 
-export function init(options: NodeOptions | undefined = {}): void {
-    const clientOptions = getClientOptions(options);
-
-    if (clientOptions.debug) {
-        logger.enable();
-    }
-
-    const client = new NodeClient(clientOptions);
-    getCurrentScope().setClient(client);
-
-    if (isEnabled(client)) {
-        client.init();
-    }
-};
-
-function getClientOptions(options: NodeOptions): NodeClientOptions {
-    const autoSessionTracking = options.autoSessionTracking ?? true;
-
-    const baseOptions = dropUndefinedKeys({
-        transport: makeNodeTransport,
-        dsn: process.env.RIBBAN_DSN,
-        environment: process.env.RIBBAN_ENVIRONMENT,
-    });
-
-    const overwriteOptions = dropUndefinedKeys({
-        autoSessionTracking,
-    });
-
-    const clientOptions: NodeClientOptions = {
-        ...baseOptions,
-        ...options,
-        ...overwriteOptions,       
+export function init(options: BrowserOptions = {}): void {
+    const newOptions = applyDefaultOptions(options);
+    
+    const clientOptions: BrowserClientOptions = {
+        ...newOptions,
         stackParser: stackParserFromStackParserOptions(options.stackParser || defaultStackParser),
+        transport: options.transport || makeFetchTransport,
     };
 
-    return clientOptions;
+    initAndBind(BrowserClient, clientOptions);
 }
 
-function isEnabled(client: Client): boolean {
-    return client.getOptions().enabled !== false && client.getTransport() !== undefined;
+function applyDefaultOptions(options: BrowserOptions = {}): BrowserOptions {
+    const defaultOptions: BrowserOptions = {
+        autoSessionTracking: true,
+    };
+
+    return { ...defaultOptions, ...options };
+}
+
+export type ClientClass<F extends Client, O extends ClientOptions> = new (options: O) => F;
+
+function initAndBind<F extends Client, O extends ClientOptions>(
+    clientClass: ClientClass<F, O>,
+    options: O
+): void {
+    if (options.debug === true) {
+        logger.enable();
+    };
+
+    const scope = getCurrentScope();
+    scope.update(options.initialScope);
+    
+    const client = new clientClass(options);
+    setCurrentClient(client);
+    client.init();
 }

@@ -46,7 +46,6 @@ export function filenameIsInApp(filename: string, isNative: boolean = false): bo
         
     // in_app is all that's not an internal Node function or a module within node_modules
     // note that isNative appears to return true even for node core libraries
-    // see https://github.com/getsentry/raven-node/issues/176
         
     return !isInternal && filename !== undefined && !filename.includes('node_modules/');
 }

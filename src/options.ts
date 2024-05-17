@@ -4,6 +4,7 @@ import { StackParser } from "./types/stacktrace";
 
 export interface ClientOptions<TO extends BaseTransportOptions = BaseTransportOptions> {
     debug?: boolean;
+    attachStacktrace?: boolean;
     enabled?: boolean;
     autoSessionTracking?: boolean;
     dsn?: string;

@@ -19,7 +19,6 @@ export function htmlTreeAsString(
     }
   
     // try/catch both:
-    // - accessing event.target (see getsentry/raven-js#838, #768)
     // - `htmlTreeAsString` because it's complex, and just accessing the DOM incorrectly
     // - can throw an exception in some circumstances.
     try {

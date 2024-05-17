@@ -27,7 +27,7 @@ interface RibbanCarrier {
 }
 
 export function getMainCarrier(): Carrier {
-    // This ensures a Sentry carrier exists
+    // This ensures a Ribban carrier exists
     getRibbanCarrier(GLOBAL_OBJ);
     return GLOBAL_OBJ;
 }

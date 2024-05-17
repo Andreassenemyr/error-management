@@ -34,7 +34,7 @@ export class Scope implements ScopeInterface {
   
     /**
      * A place to stash data which is needed at some point in the SDK's event processing pipeline but which shouldn't get
-     * sent to Sentry
+     * sent to Ribban
      */
     protected _sdkProcessingMetadata: { [key: string]: unknown };
   
@@ -114,6 +114,7 @@ export class Scope implements ScopeInterface {
     public setClient(client: Client | undefined): void {
         this._client = client;
     }
+
   
     /**
      * @inheritDoc
@@ -290,7 +291,7 @@ export class Scope implements ScopeInterface {
         return eventId;
       }
   
-      const syntheticException = new Error('Sentry syntheticException');
+      const syntheticException = new Error('Ribban syntheticException');
   
       this._client.captureException(
         exception,

@@ -20,11 +20,11 @@ export interface InternalGlobal {
         id?: string;
     };
     /**
-     * Debug IDs are indirectly injected by Sentry CLI or bundler plugins to directly reference a particular source map
+     * Debug IDs are indirectly injected by Ribban CLI or bundler plugins to directly reference a particular source map
      * for resolving of a source file. The injected code will place an entry into the record for each loaded bundle/JS
      * file.
      */
-    _sentryDebugIds?: Record<string, string>;
+    _ribbanDebugIds?: Record<string, string>;
     __RIBBAN__: {
         hub: any;
         logger: any;
@@ -36,9 +36,9 @@ export interface InternalGlobal {
         globalScope: Scope | undefined;
         defaultCurrentScope: Scope | undefined;
         defaultIsolationScope: Scope | undefined;
-        /** Overwrites TextEncoder used in `@sentry/utils`, need for `react-native@0.73` and older */
+        /** Overwrites TextEncoder used in `@ribban/utils`, need for `react-native@0.73` and older */
         encodePolyfill?: (input: string) => Uint8Array;
-        /** Overwrites TextDecoder used in `@sentry/utils`, need for `react-native@0.73` and older */
+        /** Overwrites TextDecoder used in `@ribban/utils`, need for `react-native@0.73` and older */
         decodePolyfill?: (input: Uint8Array) => string;
     };
 

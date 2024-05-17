@@ -41,8 +41,8 @@ export interface AsyncContextStrategy {
 export function setAsyncContextStrategy(strategy: AsyncContextStrategy | undefined): void {
     // Get main carrier (global for every environment)
     const registry = getMainCarrier();
-    const sentry = getRibbanCarrier(registry);
-    sentry.acs = strategy;
+    const ribbanCarrier = getRibbanCarrier(registry);
+    ribbanCarrier.acs = strategy;
 }
 
 interface Layer {
@@ -55,10 +55,10 @@ interface Layer {
    * If none has been setup, the default will be used.
    */
 export function getAsyncContextStrategy(carrier: Carrier): AsyncContextStrategy {
-    const sentry = getRibbanCarrier(carrier);
+    const ribban = getRibbanCarrier(carrier);
   
-    if (sentry.acs) {
-      return sentry.acs;
+    if (ribban.acs) {
+      return ribban.acs;
     }
   
     // Otherwise, use the default one (stack)

@@ -21,10 +21,10 @@ export interface Session {
     abnormal_mechanism?: string;
     /**
      * Overrides default JSON serialization of the Session because
-     * the Sentry servers expect a slightly different schema of a session
+     * the Ribban servers expect a slightly different schema of a session
      * which is described in the interface @see SerializedSession in this file.
      *
-     * @return a Sentry-backend conforming JSON object of the session
+     * @return a Ribban-backend conforming JSON object of the session
      */
     toJSON(): SerializedSession;
  }

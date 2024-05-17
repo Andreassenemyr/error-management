@@ -1,3 +1,6 @@
+import { Event } from "../types";
+import { Exception } from "../types/exception";
+import { Mechanism } from "../types/mechanism";
 import { logger } from "./logger";
 import { addNonEnumerableProperty } from "./object";
 
@@ -38,3 +41,36 @@ export function parseSampleRate(sampleRate: unknown): number | undefined {
   
     return rate;
  }
+
+ export function addExceptionTypeValue(event: Event, value?: string, type?: string): void {
+    const exception = (event.exception = event.exception || {});
+    const values = (exception.values = exception.values || []);
+    const firstException = (values[0] = values[0] || {});
+    if (!firstException.value) {
+        firstException.value = value || '';
+    }
+    if (!firstException.type) {
+        firstException.type = type || 'Error';
+    }
+}
+
+function getFirstException(event: Event): Exception | undefined {
+    return event.exception && event.exception.values ? event.exception.values[0] : undefined;
+}
+
+export function addExceptionMechanism(event: Event, newMechanism?: Partial<Mechanism>): void {
+    const firstException = getFirstException(event);
+    if (!firstException) {
+        return;
+    }
+  
+    const defaultMechanism = { type: 'generic', handled: true };
+    const currentMechanism = firstException.mechanism;
+    firstException.mechanism = { ...defaultMechanism, ...currentMechanism, ...newMechanism };
+  
+    if (newMechanism && 'data' in newMechanism) {
+        const mergedData = { ...(currentMechanism && currentMechanism.data), ...newMechanism.data };
+        firstException.mechanism.data = mergedData;
+    }
+}
+  

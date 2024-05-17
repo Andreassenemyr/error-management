@@ -28,7 +28,7 @@ interface Logger extends LoggerConsoleMethods {
 }
   
 /**
- * Temporarily disable sentry console instrumentations.
+ * Temporarily disable Ribban console instrumentations.
  *
  * @param callback The function to run against the original `console` messages
  * @returns The results of the callback

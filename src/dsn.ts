@@ -82,7 +82,7 @@ function validateDsn(dsn: HostComponent): boolean {
     const requiredComponents: ReadonlyArray<keyof HostComponent> = ['protocol', 'publicKey', 'host', 'projectId'];
     const hasMissingRequiredComponent = requiredComponents.find(component => {
         if (!dsn[component]) {
-            logger.error(`Invalid Sentry Dsn: ${component} missing`);
+            logger.error(`Invalid Ribban Dsn: ${component} missing`);
             return true;
         }
 
@@ -94,17 +94,17 @@ function validateDsn(dsn: HostComponent): boolean {
     }
   
     if (!projectId.match(/^\d+$/)) {
-        logger.error(`Invalid Sentry Dsn: Invalid projectId ${projectId}`);
+        logger.error(`Invalid Ribban Dsn: Invalid projectId ${projectId}`);
         return false;
     }
   
     if (!isValidProtocol(protocol)) {
-        logger.error(`Invalid Sentry Dsn: Invalid protocol ${protocol}`);
+        logger.error(`Invalid Ribban Dsn: Invalid protocol ${protocol}`);
         return false;
     }
   
     if (port && isNaN(parseInt(port, 10))) {
-        logger.error(`Invalid Sentry Dsn: Invalid port ${port}`);
+        logger.error(`Invalid Ribban Dsn: Invalid port ${port}`);
         return false;
     }
   

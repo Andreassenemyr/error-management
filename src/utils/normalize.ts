@@ -55,18 +55,18 @@ function visit(
     // From here on, we can assert that `value` is either an object or an array.
   
     // Do not normalize objects that we know have already been normalized. As a general rule, the
-    // "__sentry_skip_normalization__" property should only be used sparingly and only should only be set on objects that
+    // "__ribban_skip_normalization__" property should only be used sparingly and only should only be set on objects that
     // have already been normalized.
-    if ((value as ObjOrArray<unknown>)['__sentry_skip_normalization__']) {
+    if ((value as ObjOrArray<unknown>)['__ribban_skip_normalization__']) {
       return value as ObjOrArray<unknown>;
     }
   
-    // We can set `__sentry_override_normalization_depth__` on an object to ensure that from there
+    // We can set `__ribban_override_normalization_depth__` on an object to ensure that from there
     // We keep a certain amount of depth.
     // This should be used sparingly, e.g. we use it for the redux integration to ensure we get a certain amount of state.
     const remainingDepth =
-      typeof (value as ObjOrArray<unknown>)['__sentry_override_normalization_depth__'] === 'number'
-        ? ((value as ObjOrArray<unknown>)['__sentry_override_normalization_depth__'] as number)
+      typeof (value as ObjOrArray<unknown>)['__ribban_override_normalization_depth__'] === 'number'
+        ? ((value as ObjOrArray<unknown>)['__ribban_override_normalization_depth__'] as number)
         : depth;
   
     // We're also done if we've reached the max depth

@@ -3,6 +3,7 @@ import { Scope as ScopeClass } from "./scope";
 import { Scope } from "./index";
 import { getMainCarrier } from "./carrier";
 import { getAsyncContextStrategy } from "./async-context";
+import { Client } from "./client";
 
 export function getDefaultCurrentScope(): Scope {
     return getGlobalSingleton('defaultCurrentScope', () => new ScopeClass());
@@ -10,6 +11,10 @@ export function getDefaultCurrentScope(): Scope {
 
 export function getDefaultIsolationScope(): Scope {
     return getGlobalSingleton('defaultIsolationScope', () => new ScopeClass());
+}
+
+export function getClient<C extends Client>(): C | undefined {
+    return getCurrentScope().getClient<C>();
 }
 
 export function getCurrentScope(): Scope {

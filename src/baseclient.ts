@@ -232,11 +232,11 @@ export abstract class BaseClient<O extends ClientOptions> implements Client<O> {
                 return finalEvent.event_id;
             },
             (reason) => {
-                const sentryError = reason as RibbanError;
-                if (sentryError.logLevel === 'log') {
-                    logger.log(sentryError.message);
+                const ribbanError = reason as RibbanError;
+                if (ribbanError.logLevel === 'log') {
+                    logger.log(ribbanError.message);
                 } else {
-                    logger.warn(sentryError);
+                    logger.warn(ribbanError);
                 }
 
                 return undefined;
