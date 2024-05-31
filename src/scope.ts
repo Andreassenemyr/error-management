@@ -287,7 +287,7 @@ export class Scope implements ScopeInterface {
       const eventId = hint && hint.event_id ? hint.event_id : uuid4();
   
       if (!this._client) {
-        logger.warn('No client configured on scope - will not capture exception!');
+        console.warn('No client configured on scope - will not capture exception!');
         return eventId;
       }
   
@@ -314,7 +314,7 @@ export class Scope implements ScopeInterface {
       const eventId = hint && hint.event_id ? hint.event_id : uuid4();
   
       if (!this._client) {
-        logger.warn('No client configured on scope - will not capture message!');
+        console.warn('No client configured on scope - will not capture message!');
         return eventId;
       }
   
@@ -342,7 +342,7 @@ export class Scope implements ScopeInterface {
       const eventId = hint && hint.event_id ? hint.event_id : uuid4();
   
       if (!this._client) {
-        logger.warn('No client configured on scope - will not capture event!');
+        console.warn('No client configured on scope - will not capture event!');
         return eventId;
       }
   

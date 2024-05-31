@@ -9,7 +9,7 @@ import { Session, SessionAggregates } from "./session";
 import { SessionFlusher } from "./sessionflusher";
 import { BaseTransportOptions, Transport, TransportMakeRequestResponse } from "./transport";
 import { resolvedSyncPromise } from "./transport/syncpromise";
-import { Envelope, Event, EventHint, NodeClientOptions, SeverityLevel } from "./types";
+import { Envelope, Event, EventHint, SeverityLevel } from "./types";
 import { Exception } from "./types/exception";
 import { Mechanism } from "./types/mechanism";
 import { StackFrame } from "./types/stackframe";
@@ -268,6 +268,8 @@ export class BrowserClient extends BaseClient<BrowserClientOptions> {
     }
 
     public eventFromException(exception: any, hint?: EventHint | undefined): PromiseLike<Event> {
+        console.log('Getting Event from Exception.', exception)
+
         return eventFromException(this.options.stackParser, exception, hint, this.options.attachStacktrace);
     }
     
@@ -290,9 +292,13 @@ export function eventFromUnknownInput(
 ): Event {
     let event: Event;
 
+    console.log('Getting Event from unknown input.', exception)
+
     if (isErrorEvent(exception as ErrorEvent) && (exception as ErrorEvent).error) {
         const errorEvent = exception as ErrorEvent;
         event = eventFromError(stackParser, errorEvent.error as Error);
+
+        console.log('Event from Error Event', event);
     }
 
     if (isDOMError(exception) || isDOMException(exception as DOMException)) {
@@ -309,6 +315,8 @@ export function eventFromUnknownInput(
     }
 
     if (isError(exception)) {
+        console.log('Event from Error', exception);
+
         return eventFromError(stackParser, exception);
     }
 
@@ -321,6 +329,8 @@ export function eventFromUnknownInput(
 
         return event;
     };
+
+    console.log('Event from String', exception)
 
     event = eventFromString(stackParser, `${exception}`, syntheticException, attachStacktrace);
     addExceptionTypeValue(event, `${exception}`, undefined);
@@ -398,11 +408,15 @@ export function eventFromException(
     hint?: EventHint,
     attachStacktrace?: boolean,
 ): PromiseLike<Event> {
+    console.log('Getting Event from Exception.', exception)
+
     const syntethicException = (hint && hint.syntheticException) || undefined;
     const event = eventFromUnknownInput(stackParser, exception, syntethicException, attachStacktrace);
 
     addExceptionMechanism(event);
     event.level = 'error';
+
+    console.log(event);
 
     if (hint && hint.event_id) {
         event.event_id = hint.event_id;
@@ -551,6 +565,8 @@ export function exceptionFromError(stackParser: StackParser, error: Error): Exce
         type: error.name || error.constructor.name,
         value: error.message,
     };
+
+    console.log(exception);
   
     const frames = parseStackFrames(stackParser, error);
     if (frames.length) {

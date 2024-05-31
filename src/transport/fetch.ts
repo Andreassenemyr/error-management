@@ -7,7 +7,7 @@ import { FetchImpl, clearCachedFetchImplementation, getNativeFetchImplementation
 export function makeFetchTransport(
     options: BrowserTransportOptions,
     nativeFetch: FetchImpl | undefined = getNativeFetchImplementation(),
-  ): Transport {
+): Transport {
     let pendingBodySize = 0;
     let pendingCount = 0;
   
@@ -19,7 +19,6 @@ export function makeFetchTransport(
         const requestOptions: RequestInit = {
             body: request.body,
             method: 'POST',
-            referrerPolicy: 'origin',
             headers: options.headers,
             // Outgoing requests are usually cancelled when navigating to a different page, causing a "TypeError: Failed to
             // fetch" error and sending a "network_error" client-outcome - in Chrome, the request status shows "(cancelled)".

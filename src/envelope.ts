@@ -13,70 +13,70 @@ export function createEnvelope<E extends Envelope>(headers: E[0], items: E[1] = 
  */
 function encodeUTF8(input: string): Uint8Array {
     return GLOBAL_OBJ.__RIBBAN__ && GLOBAL_OBJ.__RIBBAN__.encodePolyfill
-      ? GLOBAL_OBJ.__RIBBAN__.encodePolyfill(input)
-      : new TextEncoder().encode(input);
+        ? GLOBAL_OBJ.__RIBBAN__.encodePolyfill(input)
+        : new TextEncoder().encode(input);
 }
-  
-  /**
-   * Decode a UTF8 array to string.
-   */
+
+/**
+ * Decode a UTF8 array to string.
+ */
 function decodeUTF8(input: Uint8Array): string {
     return GLOBAL_OBJ.__RIBBAN__ && GLOBAL_OBJ.__RIBBAN__.decodePolyfill
-      ? GLOBAL_OBJ.__RIBBAN__.decodePolyfill(input)
-      : new TextDecoder().decode(input);
+        ? GLOBAL_OBJ.__RIBBAN__.decodePolyfill(input)
+        : new TextDecoder().decode(input);
 }
 
 export function serializeEnvelope(envelope: Envelope): string | Uint8Array {
     const [envHeaders, items] = envelope;
-  
+
     // Initially we construct our envelope as a string and only convert to binary chunks if we encounter binary data
     let parts: string | Uint8Array[] = JSON.stringify(envHeaders);
-  
+
     function append(next: string | Uint8Array): void {
-      if (typeof parts === 'string') {
-        parts = typeof next === 'string' ? parts + next : [encodeUTF8(parts), next];
-      } else {
-        parts.push(typeof next === 'string' ? encodeUTF8(next) : next);
-      }
-    }
-  
-    for (const item of items) {
-      const [itemHeaders, payload] = item;
-  
-      append(`\n${JSON.stringify(itemHeaders)}\n`);
-  
-      if (typeof payload === 'string' || payload instanceof Uint8Array) {
-        append(payload);
-      } else {
-        let stringifiedPayload: string;
-        try {
-          stringifiedPayload = JSON.stringify(payload);
-        } catch (e) {
-          // In case, despite all our efforts to keep `payload` circular-dependency-free, `JSON.strinify()` still
-          // fails, we try again after normalizing it again with infinite normalization depth. This of course has a
-          // performance impact but in this case a performance hit is better than throwing.
-          stringifiedPayload = JSON.stringify(payload);
+        if (typeof parts === 'string') {
+            parts = typeof next === 'string' ? parts + next : [encodeUTF8(parts), next];
+        } else {
+            parts.push(typeof next === 'string' ? encodeUTF8(next) : next);
         }
-        append(stringifiedPayload);
-      }
     }
-  
+
+    for (const item of items) {
+        const [itemHeaders, payload] = item;
+
+        append(`\n${JSON.stringify(itemHeaders)}\n`);
+
+        if (typeof payload === 'string' || payload instanceof Uint8Array) {
+            append(payload);
+        } else {
+            let stringifiedPayload: string;
+            try {
+                stringifiedPayload = JSON.stringify(payload);
+            } catch (e) {
+                // In case, despite all our efforts to keep `payload` circular-dependency-free, `JSON.strinify()` still
+                // fails, we try again after normalizing it again with infinite normalization depth. This of course has a
+                // performance impact but in this case a performance hit is better than throwing.
+                stringifiedPayload = JSON.stringify(payload);
+            }
+            append(stringifiedPayload);
+        }
+    }
+
     return typeof parts === 'string' ? parts : concatBuffers(parts);
 }
 
 function concatBuffers(buffers: Uint8Array[]): Uint8Array {
     const totalLength = buffers.reduce((acc, buf) => acc + buf.length, 0);
-  
+
     const merged = new Uint8Array(totalLength);
     let offset = 0;
     for (const buffer of buffers) {
         merged.set(buffer, offset);
         offset += buffer.length;
     }
-  
+
     return merged;
 }
-  
+
 
 export type DataCategory = 'session' | 'attachment' | 'transaction' | 'error' | 'internal' | 'default' | 'profile' | 'replay' | 'monitor' | 'feedback' | 'metric_bucket' | 'span';
 
@@ -96,10 +96,10 @@ const ITEM_TYPE_TO_DATA_CATEGORY_MAP: Record<EnvelopeItemType, DataCategory> = {
     span: 'span',
     statsd: 'metric_bucket',
 };
-  
-  /**
-   * Maps the type of an envelope item to a data category.
-   */
+
+/**
+ * Maps the type of an envelope item to a data category.
+ */
 export function envelopeItemTypeToDataCategory(type: EnvelopeItemType): DataCategory {
     return ITEM_TYPE_TO_DATA_CATEGORY_MAP[type];
 }
@@ -136,16 +136,16 @@ export function createSessionEnvelope(
     tunnel?: string,
 ): SessionEnvelope {
     const envelopeHeaders = {
-      sent_at: new Date().toISOString(),
-      ...(!!tunnel && dsn && { dsn: dsnToString(dsn) }),
+        sent_at: new Date().toISOString(),
+        ...(!!tunnel && dsn && { dsn: dsnToString(dsn) }),
     };
-  
+
     const envelopeItem: SessionItem =
-      'aggregates' in session ? [{ type: 'sessions' }, session] : [{ type: 'session' }, session.toJSON()];
-  
+        'aggregates' in session ? [{ type: 'sessions' }, session] : [{ type: 'session' }, session.toJSON()];
+
     return createEnvelope<SessionEnvelope>(envelopeHeaders, [envelopeItem]);
 }
-  
+
 
 export function createEventEnvelopeHeaders(
     event: Event,
@@ -154,11 +154,11 @@ export function createEventEnvelopeHeaders(
 ): EventEnvelopeHeaders {
     const dynamicSamplingContext = event.sdkProcessingMetadata && event.sdkProcessingMetadata.dynamicSamplingContext;
     return {
-      event_id: event.event_id as string,
-      sent_at: new Date().toISOString(),
-      ...(!!tunnel && dsn && { dsn: dsnToString(dsn) }),
-      ...(dynamicSamplingContext && {
+        event_id: event.event_id as string,
+        sent_at: new Date().toISOString(),
+        ...(!!tunnel && dsn && { dsn: dsnToString(dsn) }),
+        ...(dynamicSamplingContext && {
             trace: dropUndefinedKeys({ ...dynamicSamplingContext }),
-      }),
+        }),
     };
 }

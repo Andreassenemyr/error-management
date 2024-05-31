@@ -63,5 +63,7 @@ export function captureException(
     exception: any,
     hint?: ExclusiveEventHintOrCaptureContext,
 ) {
+    console.log('We got exception', exception.message)
+    
     return getCurrentScope().captureException(exception, parseEventHintOrCaptureContext(hint));
 }

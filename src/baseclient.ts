@@ -29,10 +29,12 @@ export abstract class BaseClient<O extends ClientOptions> implements Client<O> {
         this._numProcessing = 0;
 
         if (options.dsn) {
-            createDSN(options.dsn);
+            this._dsn = createDSN(options.dsn);
         } else {
             logger.warn('No DSN was provided, the client will not send any requests.')
         }
+
+        console.log(this._dsn)
 
         if (this._dsn) {
             const url = getEnvelopeEndpointWithUrlEncodedAuth(
@@ -56,14 +58,18 @@ export abstract class BaseClient<O extends ClientOptions> implements Client<O> {
             return eventId;
         }
 
+        console.log("Message in BaseClient: " + exception.message);
+
         const hintWithEventId = {
             event_id: eventId,
             ...hint,
         };
 
-        this._process(this.eventFromException(exception. hintWithEventId).then((event) => 
+        this._process(this.eventFromException(exception, hintWithEventId).then((event) => 
             this._captureEvent(event, hintWithEventId, currentScope),
         ));
+
+        console.log(hintWithEventId.event_id);
 
         return hintWithEventId.event_id;
     };
@@ -109,6 +115,8 @@ export abstract class BaseClient<O extends ClientOptions> implements Client<O> {
 
         let envelope = createEventEnvelope(event, this._dsn, this.options.tunnel);
 
+        console.log(envelope)
+
         const promise = this.sendEnvelope(envelope);
         if (promise) {
             promise.then(sendResponse => this.emit('afterSendEvent', event, sendResponse));
@@ -116,18 +124,20 @@ export abstract class BaseClient<O extends ClientOptions> implements Client<O> {
     }
 
     public sendEnvelope(envelope: Envelope): PromiseLike<TransportMakeRequestResponse> {
+        console.log('sending')
+
         this.emit('beforeEnvelope', envelope);
 
         if (this._isEnabled() && this._transport) {
             console.log('Sending envelope');
 
             return this._transport.send(envelope).then(null, (errorReason) => {
-                logger.error(`Error while sending event: ${errorReason}`);
+                console.error(`Error while sending event: ${errorReason}`);
                 return errorReason;
             })
         }
 
-        logger.error('Transport is disabled.');
+        console.error('Transport is disabled.', this._isEnabled(), this._transport);
         return resolvedSyncPromise({});
     }
     
@@ -234,9 +244,9 @@ export abstract class BaseClient<O extends ClientOptions> implements Client<O> {
             (reason) => {
                 const ribbanError = reason as RibbanError;
                 if (ribbanError.logLevel === 'log') {
-                    logger.log(ribbanError.message);
+                    console.log("LOG - " +  ribbanError.message);
                 } else {
-                    logger.warn(ribbanError);
+                    console.log("ERROR - " +  ribbanError);
                 }
 
                 return undefined;
@@ -265,7 +275,7 @@ export abstract class BaseClient<O extends ClientOptions> implements Client<O> {
 
         return this._prepareEvent(event, hint, currentScope).then((prepared) => {
             if (prepared === null) {
-                throw new RibbanError('An evnet processor returned null, will not send event.', 'log');
+                throw new RibbanError('An event processor returned null, will not send event.', 'log');
             }
 
             const isInternalException = hint.data && (hint.data as { __ribban__: boolean }).__ribban__ === true;
@@ -279,6 +289,8 @@ export abstract class BaseClient<O extends ClientOptions> implements Client<O> {
             if (processed === null) {
                 throw new RibbanError(`${beforeSendLabel} returned \`null\`, will not send event.`, 'log');
             }
+
+            console.log('SENDING EVENT ', processed.event_id)
 
             this.sendEvent(processed, hint);
             return processed;

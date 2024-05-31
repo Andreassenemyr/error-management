@@ -3,14 +3,14 @@ import { BrowserClient, BrowserClientOptions, BrowserOptions, Client, setCurrent
 import { getCurrentScope } from "./current-scopes";
 import { ClientOptions } from "./options";
 import { makeFetchTransport } from "./transport/fetch";
-import { makeNodeTransport } from "./transport/http";
-import { NodeClientOptions, NodeOptions } from "./types";
 import { stackParserFromStackParserOptions } from "./types/stacktrace";
 import { logger } from "./utils/logger";
 import { dropUndefinedKeys } from "./utils/object";
 
 export function init(options: BrowserOptions = {}): void {
     const newOptions = applyDefaultOptions(options);
+
+    console.log('Test Client')
     
     const clientOptions: BrowserClientOptions = {
         ...newOptions,

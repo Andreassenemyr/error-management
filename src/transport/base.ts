@@ -42,7 +42,7 @@ export function createTransport(
             makeRequest({ body: serializeEnvelope(filteredEnvelope) }).then(
                 response => {
                     if (response.statusCode !== undefined && (response.statusCode < 200 && response.statusCode >= 300)) {
-                        logger.warn(`Ribban responded with status code ${response.statusCode} to sent event.`);
+                        console.warn(`Ribban responded with status code ${response.statusCode} to sent event.`);
                     }
                     
                     return response;

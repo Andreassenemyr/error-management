@@ -3,7 +3,6 @@ import { HostComponent } from "./dsn";
 import { ClientOptions, Options } from "./options";
 import { Primitive } from "./scope";
 import { SerializedSession, Session, SessionAggregates } from "./session";
-import { NodeTransportOptions } from "./transport/http";
 import { Exception } from "./types/exception";
 
 export interface BaseNodeOptions {
@@ -12,9 +11,6 @@ export interface BaseNodeOptions {
     onFatalError?(this: void, error: Error): void;
 }
 
-export interface NodeOptions extends Options<NodeTransportOptions>, BaseNodeOptions {};
-
-export interface NodeClientOptions extends ClientOptions<NodeTransportOptions>, BaseNodeOptions {}
 
 export type SeverityLevel = 'fatal' | 'error' | 'warning' | 'log' | 'info' | 'debug';
 
