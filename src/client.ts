@@ -6,7 +6,7 @@ import { getClient, getCurrentScope, getIsolationScope } from "./current-scopes"
 import { HostComponent } from "./dsn";
 import { ClientOptions, Options } from "./options";
 import { Session, SessionAggregates } from "./session";
-import { SessionFlusher } from "./sessionflusher";
+import { SessionFlusher } from "./core/sessionflusher";
 import { BaseTransportOptions, Transport, TransportMakeRequestResponse } from "./transport";
 import { resolvedSyncPromise } from "./transport/syncpromise";
 import { Envelope, Event, EventHint, SeverityLevel } from "./types";

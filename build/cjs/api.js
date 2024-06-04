@@ -16,7 +16,7 @@ function _encodedAuthentication(host) {
     });
 }
 function _getIngestEndpoint(dsn) {
-    return `${getBaseAPIEndpoint(dsn)}${dsn.projectId}/envelope/`;
+    return `${getBaseAPIEndpoint(dsn)}${dsn.projectId}/envelope`;
 }
 
 function getEnvelopeEndpointWithUrlEncodedAuth(dsn, tunnel) {

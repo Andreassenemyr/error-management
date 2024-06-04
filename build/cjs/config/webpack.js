@@ -6,7 +6,6 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 const fs = require('fs');
 const path = require('path');
-require('url');
 const resolve = require('resolve');
 
 let showedMissingGlobalErrorWarningMsg = false;

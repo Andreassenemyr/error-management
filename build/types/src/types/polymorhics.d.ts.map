@@ -1,0 +1,1 @@
+{"version":3,"file":"polymorhics.d.ts","sourceRoot":"","sources":["../../../../src/types/polymorhics.ts"],"names":[],"mappings":"AAAA,MAAM,WAAW,gBAAgB;IAC7B,CAAC,GAAG,EAAE,MAAM,GAAG,OAAO,CAAC;IACvB,QAAQ,CAAC,IAAI,EAAE,MAAM,CAAC;IACtB,QAAQ,CAAC,MAAM,CAAC,EAAE,OAAO,CAAC;IAC1B,QAAQ,CAAC,aAAa,CAAC,EAAE,OAAO,CAAC;CACpC"}

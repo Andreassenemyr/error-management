@@ -220,8 +220,6 @@ function addValueInjectionLoader(
     userRibbanConfig: RibbanBuildOptions,
     buildContext: BuildContext
 ): void {
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = dirname(__filename);
 
     const assetPrefix = userNextConfig.assetPrefix || userNextConfig.basePath || '';
 

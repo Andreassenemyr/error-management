@@ -1,0 +1,47 @@
+import { Scope } from "./index";
+import { Client } from "./client";
+import { HostComponent } from "./dsn";
+import { ClientOptions } from "./options";
+import { Transport, TransportMakeRequestResponse } from "./transport";
+import { Envelope, Event, EventEnvelope, EventHint, SeverityLevel } from "./types";
+import { Session, SessionAggregates } from "./session";
+export declare abstract class BaseClient<O extends ClientOptions> implements Client<O> {
+    protected readonly options: O;
+    protected readonly _dsn?: HostComponent;
+    protected readonly _transport?: Transport;
+    protected _numProcessing: number;
+    constructor(options: O);
+    captureException(exception: any, hint?: EventHint | undefined, currentScope?: Scope | undefined): string;
+    sendSession(session: Session | SessionAggregates): void;
+    captureEvent(event: Event, hint?: EventHint | undefined, currentScope?: Scope | undefined): string;
+    abstract eventFromException(_exception: any, _hint?: EventHint): PromiseLike<Event>;
+    getDsn(): HostComponent | undefined;
+    getOptions(): O;
+    sendEvent(event: Event, hint?: EventHint): void;
+    sendEnvelope(envelope: Envelope): PromiseLike<TransportMakeRequestResponse>;
+    emit(hook: "beforeEnvelope", envelope: Envelope): void;
+    emit(hook: "beforeSendEvent", event: Event, hint?: EventHint | undefined): void;
+    emit(hook: "preprocessEvent", event: Event, hint?: EventHint | undefined): void;
+    emit(hook: "afterSendEvent", event: Event, sendResponse: TransportMakeRequestResponse): void;
+    emit(hook: "flush"): void;
+    emit(hook: "close"): void;
+    protected _prepareEvent(event: Event, hint: EventHint, currentScope?: Scope | undefined, isolationScope?: Scope): PromiseLike<Event | null>;
+    captureMessage(message: string, level?: SeverityLevel | undefined, hint?: EventHint | undefined, currentScope?: Scope | undefined): string;
+    captureSession(session: Session): void;
+    getTransport(): Transport | undefined;
+    close(timeout?: number | undefined): PromiseLike<boolean>;
+    flush(timeout?: number | undefined): PromiseLike<boolean>;
+    init(): void;
+    protected _isClientDoneProcessing(timeout?: number): PromiseLike<boolean>;
+    protected _captureEvent(event: Event, hint?: EventHint, scope?: Scope): PromiseLike<string | undefined>;
+    protected _processEvent(event: Event, hint: EventHint, currentScope?: Scope): PromiseLike<Event>;
+    on(hook: "beforeEnvelope", callback: (envelope: EventEnvelope) => void): void;
+    on(hook: "beforeSendEvent", callback: (event: Event, hint?: EventHint | undefined) => void): void;
+    on(hook: "preprocessEvent", callback: (event: Event, hint?: EventHint | undefined) => void): void;
+    on(hook: "afterSendEvent", callback: (event: Event, sendResponse: TransportMakeRequestResponse) => void): void;
+    on(hook: "flush", callback: () => void): void;
+    on(hook: "close", callback: () => void): void;
+    protected _isEnabled(): boolean;
+    protected _process<T>(promise: PromiseLike<T>): void;
+}
+//# sourceMappingURL=baseclient.d.ts.map

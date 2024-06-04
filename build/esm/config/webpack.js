@@ -1,7 +1,6 @@
 import { _optionalChain } from '@sentry/utils';
 import * as fs from 'fs';
 import * as path from 'path';
-import 'url';
 import { sync } from 'resolve';
 
 let showedMissingGlobalErrorWarningMsg = false;

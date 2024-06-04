@@ -18,7 +18,7 @@ function _encodedAuthentication(host: HostComponent): string {
 };
 
 function _getIngestEndpoint(dsn: HostComponent): string {
-    return `${getBaseAPIEndpoint(dsn)}${dsn.projectId}/envelope/`;
+    return `${getBaseAPIEndpoint(dsn)}${dsn.projectId}/envelope`;
 }
 
 export function getEnvelopeEndpointWithUrlEncodedAuth(dsn: HostComponent, tunnel?: string): string {
