@@ -4,7 +4,7 @@ export { init } from "./init";
 import { RequestSession } from "./session";
 import { EventHint } from "./types";
 import { parseEventHintOrCaptureContext } from "./utils/prepare-event";
-
+import { withRibbanConfig } from "./config/withRibbanConfig";
 
 export type CaptureContext = Scope | Partial<ScopeContext> | ((scope: Scope) => Scope);
 

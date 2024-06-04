@@ -1,7 +1,7 @@
-import { defaultStackParser } from "./api";
 import { BrowserClient, BrowserClientOptions, BrowserOptions, Client, setCurrentClient } from "./client";
 import { getCurrentScope } from "./current-scopes";
 import { ClientOptions } from "./options";
+import { defaultStackParser } from "./stack-parsers";
 import { makeFetchTransport } from "./transport/fetch";
 import { stackParserFromStackParserOptions } from "./types/stacktrace";
 import { logger } from "./utils/logger";

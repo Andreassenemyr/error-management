@@ -1,0 +1,1 @@
+{"version":3,"file":"helpers.js","sources":["../../../src/helpers/helpers.ts"],"sourcesContent":["import { GLOBAL_OBJ } from \"../worldwide\";\r\n\r\nexport const WINDOW = GLOBAL_OBJ as typeof GLOBAL_OBJ & Window;"],"names":["GLOBAL_OBJ"],"mappings":";;;;AAEO,MAAM,MAAO,GAAEA,oBAAW;;;;"}

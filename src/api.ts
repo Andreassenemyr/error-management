@@ -1,6 +1,5 @@
 import { HostComponent } from "./dsn";
 import { StackLineParser, StackLineParserFn, StackParser, createStackParser } from "./types/stacktrace";
-import { createGetModuleFromFilename } from "./utils/module";
 import { urlEncode } from "./utils/url";
 
 const RIBBAN_API_VERSION = '1';
@@ -132,9 +131,3 @@ export function node(getModule?: GetModuleFn): StackLineParserFn {
     };
 }
   
-
-export function nodeStackLineParser(getModule?: GetModuleFn): StackLineParser {
-    return [90, node(getModule)];
-}
-
-export const defaultStackParser: StackParser = createStackParser(nodeStackLineParser(createGetModuleFromFilename()));

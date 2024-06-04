@@ -8,6 +8,7 @@ export interface ClientOptions<TO extends BaseTransportOptions = BaseTransportOp
     enabled?: boolean;
     autoSessionTracking?: boolean;
     dsn?: string;
+    /** The current environment of your application (e.g. "production"). */
     environment?: string;
     transport: (transportOptions: TO) => Transport;
     transportOptions?: Partial<TO>;
@@ -21,6 +22,7 @@ export interface ClientOptions<TO extends BaseTransportOptions = BaseTransportOp
     denyUrls?: Array<string | RegExp>;
     normalizeDepth?: number;
     stackParser: StackParser;
+    
 };
 
 export interface Options<TO extends BaseTransportOptions = BaseTransportOptions> extends Omit<Partial<ClientOptions<TO>>, 'transport'> {

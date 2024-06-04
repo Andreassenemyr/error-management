@@ -114,6 +114,10 @@ export function isInstanceOf(wat: any, base: any): boolean {
         return false;
     }
 }
+
+export function isRegExp(wat: unknown): wat is RegExp {
+    return isBuiltin(wat, 'RegExp');
+}
   
 
 export function extractExceptionKeysForMessage(exception: Record<string, unknown>, maxLength: number = 40): string {

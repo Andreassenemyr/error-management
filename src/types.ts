@@ -26,26 +26,26 @@ export type DynamicSamplingContext = {
 };
 
 export type EnvelopeItemType =
-  | 'client_report'
-  | 'user_report'
-  | 'feedback'
-  | 'session'
-  | 'sessions'
-  | 'transaction'
-  | 'attachment'
-  | 'event'
-  | 'profile'
-  | 'replay_event'
-  | 'replay_recording'
-  | 'check_in'
-  | 'statsd'
-  | 'span';
+    | 'client_report'
+    | 'user_report'
+    | 'feedback'
+    | 'session'
+    | 'sessions'
+    | 'transaction'
+    | 'attachment'
+    | 'event'
+    | 'profile'
+    | 'replay_event'
+    | 'replay_recording'
+    | 'check_in'
+    | 'statsd'
+    | 'span';
 
 export type BaseEnvelopeHeaders = {
     [key: string]: unknown;
     dsn?: string;
 };
-  
+
 export type BaseEnvelopeItemHeaders = {
     [key: string]: unknown;
     type: EnvelopeItemType;
@@ -55,8 +55,8 @@ export type BaseEnvelopeItemHeaders = {
 type BaseEnvelopeItem<ItemHeader, P> = [ItemHeader & BaseEnvelopeItemHeaders, P]; // P is for payload
 
 type BaseEnvelope<EnvelopeHeader, Item> = [
-  EnvelopeHeader & BaseEnvelopeHeaders,
-  Array<Item & BaseEnvelopeItem<BaseEnvelopeItemHeaders, unknown>>,
+    EnvelopeHeader & BaseEnvelopeHeaders,
+    Array<Item & BaseEnvelopeItem<BaseEnvelopeItemHeaders, unknown>>,
 ];
 
 type EventItemHeaders = {
@@ -75,9 +75,9 @@ export type EventEnvelope = BaseEnvelope<
 type SessionItemHeaders = { type: 'session' };
 type SessionAggregatesItemHeaders = { type: 'sessions' };
 export type SessionItem =
-  // TODO(v8): Only allow serialized session here (as opposed to Session or SerializedSesison)
-  | BaseEnvelopeItem<SessionItemHeaders, Session | SerializedSession>
-  | BaseEnvelopeItem<SessionAggregatesItemHeaders, SessionAggregates>;
+    // TODO(v8): Only allow serialized session here (as opposed to Session or SerializedSesison)
+    | BaseEnvelopeItem<SessionItemHeaders, Session | SerializedSession>
+    | BaseEnvelopeItem<SessionAggregatesItemHeaders, SessionAggregates>;
 
 type SessionEnvelopeHeaders = { sent_at: string };
 export type SessionEnvelope = BaseEnvelope<SessionEnvelopeHeaders, SessionItem>;
@@ -94,16 +94,37 @@ export interface Request {
     env?: { [key: string]: string };
     headers?: { [key: string]: string };
 }
-  
+
 export type QueryParams = string | { [key: string]: string } | Array<[string, string]>;
 
+export type ServerComponentContext = {
+    componentRoute: string;
+    componentType: 'Page' | 'Layout' | 'Head' | 'Not-found' | 'Loading' | 'Unknown';
+    headers?: WebFetchHeaders;
+};
+
+export interface WebFetchHeaders {
+    append(name: string, value: string): void;
+    delete(name: string): void;
+    get(name: string): string | null;
+    has(name: string): boolean;
+    set(name: string, value: string): void;
+    forEach(callbackfn: (value: string, key: string, parent: WebFetchHeaders) => void): void;
+}
+
+export interface WebFetchRequest {
+    readonly headers: WebFetchHeaders;
+    readonly method: string;
+    readonly url: string;
+    clone(): WebFetchRequest;
+}
 
 export interface Event {
     event_id?: string;
     message?: string;
     logentry?: {
-      message?: string;
-      params?: string[];
+        message?: string;
+        params?: string[];
     };
     timestamp?: number;
     start_timestamp?: number;
@@ -119,7 +140,7 @@ export interface Event {
     modules?: { [key: string]: string };
     fingerprint?: string[];
     exception?: {
-      values?: Exception[];
+        values?: Exception[];
     };
     tags?: { [key: string]: Primitive };
     extra?: Extras;

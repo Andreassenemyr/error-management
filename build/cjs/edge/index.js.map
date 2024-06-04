@@ -1,0 +1,1 @@
+{"version":3,"file":"index.js","sources":["../../../src/edge/index.ts"],"sourcesContent":["\r\nexport function withRibbanConfig<T>(exportedUserNextConfig: T): T {\r\n  return exportedUserNextConfig;\r\n}\r\n"],"names":[],"mappings":";;AACO,SAAS,gBAAgB,CAAI,sBAAsB,EAAQ;AAClE,EAAE,OAAO,sBAAsB,CAAA;AAC/B;;;;"}
