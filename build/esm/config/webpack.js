@@ -1,11 +1,8 @@
 import { _optionalChain } from '@sentry/utils';
 import * as fs from 'fs';
 import * as path from 'path';
-import { dirname } from 'path';
-import { fileURLToPath } from 'url';
-import resolve from 'resolve';
-
-const { sync: resolveSync } = resolve;
+import 'url';
+import { sync } from 'resolve';
 
 let showedMissingGlobalErrorWarningMsg = false;
 
@@ -24,9 +21,6 @@ function constructWebpackConfigFunction(
         incomingConfig,
         buildContext
     ) {
-        const __filename = fileURLToPath(import.meta.url);
-        dirname(__filename);
-
         const { isServer, dev: isDev, dir: projectDirectory } = buildContext;
         isServer ? (buildContext.nextRuntime === 'edge' ? 'edge' : 'server') : 'client';
 
@@ -195,7 +189,7 @@ function addFilesToWebpackEntryPoint(
 
 function resolveNextPackageDirFromDirectory(basedir) {
     try {
-        return path.dirname(resolveSync('next/package.json', { basedir }));
+        return path.dirname(sync('next/package.json', { basedir }));
     } catch (e) {
         // Should not happen in theory
         return undefined;

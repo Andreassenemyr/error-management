@@ -1,6 +1,5 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import * as chalk from 'chalk';
 import type { RollupBuild, RollupError } from 'rollup';
 import { rollup } from 'rollup';
 
@@ -10,7 +9,7 @@ import { ServerComponentContext } from '../../types';
 import commonjs from '@rollup/plugin-commonjs';
 
 // Just a simple placeholder to make referencing module consistent
-const SENTRY_WRAPPER_MODULE_NAME = 'sentry-wrapper-module';
+const RIBBAN_WRAPPER_MODULE_NAME = 'ribban-wrapper-module';
 
 // Needs to end in .cjs in order for the `commonjs` plugin to pick it up
 const WRAPPING_TARGET_MODULE_NAME = '__SENTRY_WRAPPING_TARGET_FILE__.cjs';
@@ -162,15 +161,13 @@ export default function wrappingLoader(
             if (!showedMissingAsyncStorageModuleWarning) {
                 // eslint-disable-next-line no-console
                 console.warn(
-                    `${chalk.yellow('warn')}  - The Sentry SDK could not access the ${chalk.bold.cyan(
-                        'RequestAsyncStorage',
-                    )} module. Certain features may not work. There is nothing you can do to fix this yourself, but future SDK updates may resolve this.\n`,
+                    `$The Sentry SDK could not access the RequestAsyncStorage module. Certain features may not work. There is nothing you can do to fix this yourself, but future SDK updates may resolve this.\n`,
                 );
                 showedMissingAsyncStorageModuleWarning = true;
             }
             templateCode = templateCode.replace(
-                /__SENTRY_NEXTJS_REQUEST_ASYNC_STORAGE_SHIM__/g,
-                '@sentry/nextjs/esm/config/templates/requestAsyncStorageShim.js',
+                /__RIBBAN_NEXTJS_REQUEST_ASYNC_STORAGE_SHIM__/g,
+                '@ribban/error-management/esm/config/templates/requestAsyncStorageShim.js',
             );
         }
 
@@ -213,7 +210,7 @@ export default function wrappingLoader(
     }
 
     // Replace the import path of the wrapping target in the template with a path that the `wrapUserCode` function will understand.
-    templateCode = templateCode.replace(/__SENTRY_WRAPPING_TARGET_FILE__/g, WRAPPING_TARGET_MODULE_NAME);
+    templateCode = templateCode.replace(/__RIBBAN_WRAPPING_TARGET_FILE__/g, WRAPPING_TARGET_MODULE_NAME);
 
     // Run the proxy module code through Rollup, in order to split the `export * from '<wrapped file>'` out into
     // individual exports (which nextjs seems to require).
@@ -224,7 +221,7 @@ export default function wrappingLoader(
         .catch(err => {
             // eslint-disable-next-line no-console
             console.warn(
-                `[@sentry/nextjs] Could not instrument ${this.resourcePath}. An error occurred while auto-wrapping:\n${err}`,
+                `[@ribban/error-management] Could not instrument ${this.resourcePath}. An error occurred while auto-wrapping:\n${err}`,
             );
             this.callback(null, userCode, userModuleSourceMap);
         });
@@ -253,23 +250,23 @@ async function wrapUserCode(
 ): Promise<{ code: string; map?: any }> {
     const wrap = (withDefaultExport: boolean): Promise<RollupBuild> =>
         rollup({
-            input: SENTRY_WRAPPER_MODULE_NAME,
+            input: RIBBAN_WRAPPER_MODULE_NAME,
 
             plugins: [
                 // We're using a simple custom plugin that virtualizes our wrapper module and the user module, so we don't have to
                 // mess around with file paths and so that we can pass the original user module source map to rollup so that
                 // rollup gives us a bundle with correct source mapping to the original file
                 {
-                    name: 'virtualize-sentry-wrapper-modules',
+                    name: 'virtualize-ribban-wrapper-modules',
                     resolveId: id => {
-                        if (id === SENTRY_WRAPPER_MODULE_NAME || id === WRAPPING_TARGET_MODULE_NAME) {
+                        if (id === RIBBAN_WRAPPER_MODULE_NAME || id === WRAPPING_TARGET_MODULE_NAME) {
                             return id;
                         } else {
                             return null;
                         }
                     },
                     load(id) {
-                        if (id === SENTRY_WRAPPER_MODULE_NAME) {
+                        if (id === RIBBAN_WRAPPER_MODULE_NAME) {
                             return withDefaultExport ? wrapperCode : wrapperCode.replace('export { default } from', 'export {} from');
                         } else if (id === WRAPPING_TARGET_MODULE_NAME) {
                             return {
@@ -298,7 +295,7 @@ async function wrapUserCode(
             ],
 
             // We only want to bundle our wrapper module and the wrappee module into one, so we mark everything else as external.
-            external: sourceId => sourceId !== SENTRY_WRAPPER_MODULE_NAME && sourceId !== WRAPPING_TARGET_MODULE_NAME,
+            external: sourceId => sourceId !== RIBBAN_WRAPPER_MODULE_NAME && sourceId !== WRAPPING_TARGET_MODULE_NAME,
 
             // Prevent rollup from stressing out about TS's use of global `this` when polyfilling await. (TS will polyfill if the
             // user's tsconfig `target` is set to anything before `es2017`. See https://stackoverflow.com/a/72822340 and

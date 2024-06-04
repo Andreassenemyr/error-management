@@ -3,8 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import resolve from "resolve";
-const { sync: resolveSync } = resolve;
+import { sync as resolveSync } from "resolve";
 
 let showedMissingGlobalErrorWarningMsg = false;
 
@@ -23,9 +22,6 @@ export function constructWebpackConfigFunction(
         incomingConfig: WebpackConfigObject,
         buildContext: BuildContext
     ): WebpackConfigObject {
-        const __filename = fileURLToPath(import.meta.url);
-        const __dirname = dirname(__filename);
-
         const { isServer, dev: isDev, dir: projectDirectory } = buildContext;
         const runtime = isServer ? (buildContext.nextRuntime === 'edge' ? 'edge' : 'server') : 'client';
 

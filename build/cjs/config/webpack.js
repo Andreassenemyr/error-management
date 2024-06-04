@@ -6,11 +6,8 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 const fs = require('fs');
 const path = require('path');
-const url = require('url');
+require('url');
 const resolve = require('resolve');
-
-var _documentCurrentScript = typeof document !== 'undefined' ? document.currentScript : null;
-const { sync: resolveSync } = resolve.default;
 
 let showedMissingGlobalErrorWarningMsg = false;
 
@@ -29,9 +26,6 @@ function constructWebpackConfigFunction(
         incomingConfig,
         buildContext
     ) {
-        const __filename = url.fileURLToPath((typeof document === 'undefined' ? require('u' + 'rl').pathToFileURL(__filename).href : (_documentCurrentScript && _documentCurrentScript.src || new URL('config/webpack.js', document.baseURI).href)));
-        path.dirname(__filename);
-
         const { isServer, dev: isDev, dir: projectDirectory } = buildContext;
         isServer ? (buildContext.nextRuntime === 'edge' ? 'edge' : 'server') : 'client';
 
@@ -200,7 +194,7 @@ function addFilesToWebpackEntryPoint(
 
 function resolveNextPackageDirFromDirectory(basedir) {
     try {
-        return path.dirname(resolveSync('next/package.json', { basedir }));
+        return path.dirname(resolve.sync('next/package.json', { basedir }));
     } catch (e) {
         // Should not happen in theory
         return undefined;

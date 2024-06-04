@@ -17,8 +17,8 @@ run('yarn rollup -c rollup.npm.config.mjs');
 // templates over into the CJS build directory. (Building only the ESM version and sticking it in both locations is
 // something which in theory Rollup could do, but it would mean refactoring our Rollup helper functions, which isn't
 // worth it just for this.)
-const cjsTemplateDir = 'build/cjs/config/templates/';
+/*const cjsTemplateDir = 'build/cjs/config/templates/';
 const esmTemplateDir = 'build/esm/config/templates/';
 fs.readdirSync(esmTemplateDir).forEach(templateFile =>
     fs.copyFileSync(path.join(esmTemplateDir, templateFile), path.join(cjsTemplateDir, templateFile)),
-);
+);*/

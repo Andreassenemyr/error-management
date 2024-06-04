@@ -1,1 +1,1 @@
-{"version":3,"file":"helpers.js","sources":["../../../src/helpers/helpers.ts"],"sourcesContent":["import { GLOBAL_OBJ } from \"../worldwide\";\r\n\r\nexport const WINDOW = GLOBAL_OBJ as typeof GLOBAL_OBJ & Window;"],"names":[],"mappings":";;AAEO,MAAM,MAAO,GAAE,UAAW;;;;"}
+{"version":3,"file":"helpers.js","sources":["../../../src/helpers/helpers.ts"],"sourcesContent":["import { GLOBAL_OBJ } from \"../worldwide\";\n\nexport const WINDOW = GLOBAL_OBJ as typeof GLOBAL_OBJ & Window;"],"names":[],"mappings":";;AAEO,MAAM,MAAO,GAAE,UAAW;;;;"}

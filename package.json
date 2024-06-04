@@ -1,6 +1,6 @@
 {
   "name": "@ribban/error-management",
-  "version": "1.1.4",
+  "version": "2.0.0",
   "main": "build/cjs/index.server.js",
   "module": "build/esm/index.server.js",
   "types": "build/types/index.types.d.ts",
@@ -8,7 +8,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup",
+    "build": "npx ts-node scripts/buildRollup.ts",
     "test": "jest"
   },
   "exports": {
@@ -84,6 +84,7 @@
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-replace": "^5.0.5",
     "@rollup/plugin-terser": "^0.4.4",
+    "@sentry/utils": "^8.7.0",
     "acorn": "^8.11.3",
     "deepmerge": "^4.3.1",
     "fs": "^0.0.1-security",
@@ -95,7 +96,7 @@
     "rollup-plugin-license": "^3.4.0",
     "tsup": "^8.0.2",
     "uuid": "^9.0.1",
-    "webpack": "^5.91.0"
-  },
-  "type": "module"
+    "webpack": "^5.91.0",
+    "yarn": "^1.22.22"
+  }
 }
