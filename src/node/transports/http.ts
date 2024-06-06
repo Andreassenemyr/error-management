@@ -1,4 +1,4 @@
-import { BaseTransportOptions, Transport } from "../../transport";
+import { BaseTransportOptions, Transport, TransportMakeRequestResponse, TransportRequest, TransportRequestExecutor } from "../../transport";
 import { createTransport } from "../../transport/base";
 import { consoleSandbox } from "../../utils/logger";
 import * as http from 'node:http';
@@ -6,6 +6,7 @@ import * as https from 'node:https';
 import { Readable } from 'node:stream';
 import type { HTTPModule } from './http-module';
 import { HttpsProxyAgent } from "../proxy";
+import { createGzip } from 'node:zlib';
 import { suppressTracing } from "../../utils/supress-tracing";
 
 export interface NodeTransportOptions extends BaseTransportOptions {
@@ -38,7 +39,7 @@ export function makeNodeTransport(options: NodeTransportOptions): Transport {
                 '[@sentry/node]: Invalid dsn or tunnel option, will not send any events. The tunnel option must be a full URL when used.',
             );
         });
-        
+
         return createTransport(options, () => Promise.resolve({}));
     }
 
@@ -83,4 +84,66 @@ function applyNoProxyOption(transportUrlSegments: URL, proxy: string | undefined
     } else {
         return proxy;
     }
+}
+
+const GZIP_THRESHOLD = 1024 * 32;
+
+function createRequestExecutor(
+    options: NodeTransportOptions,
+    httpModule: HTTPModule,
+    agent: http.Agent,
+): TransportRequestExecutor {
+    const { hostname, pathname, port, protocol, search } = new URL(options.url);
+    return function makeRequest(request: TransportRequest): Promise<TransportMakeRequestResponse> {
+        return new Promise((resolve, reject) => {
+            let body = streamFromBody(request.body);
+
+            const headers: Record<string, string> = { ...options.headers };
+
+            if (request.body.length > GZIP_THRESHOLD) {
+                headers['content-encoding'] = 'gzip';
+                body = body.pipe(createGzip());
+            }
+
+            const req = httpModule.request(
+                {
+                    method: 'POST',
+                    agent,
+                    headers,
+                    hostname,
+                    path: `${pathname}${search}`,
+                    port,
+                    protocol,
+                    ca: options.caCerts,
+                },
+                res => {
+                    res.on('data', () => {
+                        // Drain socket
+                    });
+
+                    res.on('end', () => {
+                        // Drain socket
+                    });
+
+                    res.setEncoding('utf8');
+
+                    // "Key-value pairs of header names and values. Header names are lower-cased."
+                    // https://nodejs.org/api/http.html#http_message_headers
+                    const retryAfterHeader = res.headers['retry-after'] ?? null;
+                    const rateLimitsHeader = res.headers['x-sentry-rate-limits'] ?? null;
+
+                    resolve({
+                        statusCode: res.statusCode,
+                        headers: {
+                            'retry-after': retryAfterHeader,
+                            'x-ribban-rate-limits': Array.isArray(rateLimitsHeader) ? rateLimitsHeader[0] : rateLimitsHeader,
+                        },
+                    });
+                },
+            );
+
+            req.on('error', reject);
+            body.pipe(req);
+        });
+    };
 }

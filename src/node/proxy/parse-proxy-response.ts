@@ -6,7 +6,7 @@
 /* eslint-disable jsdoc/require-jsdoc */
 import type { IncomingHttpHeaders } from 'node:http';
 import type { Readable } from 'node:stream';
-import { logger } from '@sentry/utils';
+import { logger } from '../../utils/logger';
 
 function debug(...args: unknown[]): void {
     logger.log('[https-proxy-agent:parse-proxy-response]', ...args);

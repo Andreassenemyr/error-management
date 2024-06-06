@@ -273,6 +273,8 @@ export abstract class BaseClient<O extends ClientOptions> implements Client<O> {
 
         const dataCategory: DataCategory = eventType === 'replay_event' ? 'replay' : eventType;
 
+        console.log('Preprepared event: ', event);
+
         return this._prepareEvent(event, hint, currentScope).then((prepared) => {
             if (prepared === null) {
                 throw new RibbanError('An event processor returned null, will not send event.', 'log');
@@ -282,6 +284,8 @@ export abstract class BaseClient<O extends ClientOptions> implements Client<O> {
             if (isInternalException) {
                 return prepared;
             }
+
+            console.log('Prepared event: ', prepared)
 
             const result = processBeforeSend(options, prepared, hint);
             return _validateBeforeSendResult(result, beforeSendLabel);

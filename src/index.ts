@@ -2,7 +2,7 @@ import { Client } from "./client";
 import { getCurrentScope } from "./current-scopes";
 export { init } from "./init";
 import { RequestSession } from "./session";
-import { EventHint } from "./types";
+import { Event, EventHint, SeverityLevel } from "./types";
 import { parseEventHintOrCaptureContext } from "./utils/prepare-event";
 import { withRibbanConfig } from "./config/withRibbanConfig";
 
@@ -50,7 +50,11 @@ export interface Scope {
      */
     setRequestSession(requestSession?: RequestSession): this;
 
-    captureException(exception: unknown, hint?: unknown): string;
+    captureException(exception: unknown, hint?: EventHint): string;
+
+    captureMessage(message: string, level?: SeverityLevel, hint?: EventHint): string;
+
+    captureEvent(event: Event, hint?: EventHint): string;
 
     getClient<C extends Client>(): C | undefined;
 
@@ -62,8 +66,18 @@ export interface Scope {
 export function captureException(
     exception: any,
     hint?: ExclusiveEventHintOrCaptureContext,
-) {
-    console.log('We got exception', exception.message)
-    
+) {    
     return getCurrentScope().captureException(exception, parseEventHintOrCaptureContext(hint));
 }
+
+export function captureEvent(event: Event, hint?: EventHint) {
+    return getCurrentScope().captureEvent(event, hint);
+}
+
+export function captureMessage(
+    message: string,
+    level?: SeverityLevel,
+    hint?: ExclusiveEventHintOrCaptureContext,
+) {
+    return getCurrentScope().captureMessage(message, level, parseEventHintOrCaptureContext(hint));
+}   

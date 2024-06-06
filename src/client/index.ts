@@ -1,4 +1,4 @@
-import { BrowserOptions } from '../client';
+import { BrowserOptions } from '../types';
 import { getVercelEnv } from '../common/getVercelEnv';
 import { init as BrowserInit } from '../init';
 
@@ -16,3 +16,6 @@ export function init(options: BrowserOptions) {
 
     BrowserInit(newOptions);
 };
+
+export { getClient } from '../current-scopes';
+export * from '../types';

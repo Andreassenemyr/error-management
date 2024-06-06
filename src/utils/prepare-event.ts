@@ -16,7 +16,7 @@ export function prepareEvent(
     const prepared: Event = {
         ...event,
         event_id: event.event_id || hint.event_id || uuiv4(),
-        timestamp : event.timestamp || new Date().getSeconds(),
+        timestamp : event.timestamp || Date.now(),
     };
 
     applyClientOptions(prepared, options);

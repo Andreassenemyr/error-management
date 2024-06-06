@@ -14,7 +14,7 @@ function prepareEvent(
     const prepared = {
         ...event,
         event_id: event.event_id || hint.event_id || uuid.v4(),
-        timestamp : event.timestamp || new Date().getSeconds(),
+        timestamp : event.timestamp || Date.now(),
     };
 
     applyClientOptions(prepared, options);

@@ -1,7 +1,7 @@
 import { Scope } from "./index";
 import { BaseClient } from "./baseclient";
 import { HostComponent } from "./dsn";
-import { ClientOptions, Options } from "./options";
+import { ClientOptions } from "./options";
 import { Session, SessionAggregates } from "./session";
 import { BaseTransportOptions, Transport, TransportMakeRequestResponse } from "./transport";
 import { Envelope, Event, EventHint, SeverityLevel } from "./types";
@@ -191,7 +191,6 @@ export interface BrowserTransportOptions extends BaseTransportOptions {
         [key: string]: string;
     };
 }
-export type BrowserOptions = Options<BrowserTransportOptions> & BrowserClientReplayOptions & BrowserClientProfilingOptions;
 export type BrowserClientOptions = ClientOptions<BrowserTransportOptions> & BrowserClientReplayOptions & BrowserClientProfilingOptions & {
     /** If configured, this URL will be used as base URL for lazy loading integration. */
     cdnBaseUrl?: string;
@@ -203,6 +202,7 @@ export declare class BrowserClient extends BaseClient<BrowserClientOptions> {
     eventFromMessage(message: string, level?: SeverityLevel, hint?: EventHint): PromiseLike<Event>;
     protected _prepareEvent(event: Event, hint: EventHint, currentScope?: Scope | undefined): PromiseLike<Event | null>;
 }
+export declare function eventFromClientUnknownInput(client: Client, stackParser: StackParser, exception: unknown, hint?: EventHint): Event;
 export declare function eventFromUnknownInput(stackParser: StackParser, exception: unknown, syntheticException?: Error, attachStacktrace?: boolean, isUnhandledRejection?: boolean): Event;
 export declare function eventFromMessage(stackParser: StackParser, message: ParameterizedString, level?: SeverityLevel, hint?: EventHint, attachStacktrace?: boolean): PromiseLike<Event>;
 export declare function eventFromException(stackParser: StackParser, exception: unknown, hint?: EventHint, attachStacktrace?: boolean): PromiseLike<Event>;

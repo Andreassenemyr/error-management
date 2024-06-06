@@ -1,4 +1,4 @@
-import { BrowserOptions } from "../client";
+import { BrowserOptions } from "../types";
 
 export function withRibbanConfig<T>(exportedUserNextConfig: T): T {
   return exportedUserNextConfig;

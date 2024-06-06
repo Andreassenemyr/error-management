@@ -5,6 +5,8 @@ import type { BasicTracerProvider } from '@opentelemetry/sdk-trace-base';
 import { isMainThread, threadId } from 'worker_threads';
 import { ServerRuntimeClientOptions } from '../../client';
 import { logger } from '../../utils/logger';
+import { NodeClientOptions } from '../types';
+import { ServerRuntimeClient } from '../../server-runtime-client';
 
 /** A client for using Sentry with Node & OpenTelemetry. */
 export class NodeClient extends ServerRuntimeClient<NodeClientOptions> {

@@ -4,13 +4,7 @@ import { ClientOptions, Options } from "./options";
 import { Primitive } from "./scope";
 import { SerializedSession, Session, SessionAggregates } from "./session";
 import { Exception } from "./types/exception";
-
-export interface BaseNodeOptions {
-    serverName?: string;
-
-    onFatalError?(this: void, error: Error): void;
-}
-
+import { BrowserClientProfilingOptions, BrowserClientReplayOptions, BrowserTransportOptions } from "./client";
 
 export type SeverityLevel = 'fatal' | 'error' | 'warning' | 'log' | 'info' | 'debug';
 
@@ -95,6 +89,12 @@ export interface Request {
     headers?: { [key: string]: string };
 }
 
+
+export type BrowserOptions = Options<BrowserTransportOptions> &
+    BrowserClientReplayOptions &
+    BrowserClientProfilingOptions;
+
+
 export type QueryParams = string | { [key: string]: string } | Array<[string, string]>;
 
 export type ServerComponentContext = {
@@ -145,6 +145,8 @@ export interface Event {
     tags?: { [key: string]: Primitive };
     extra?: Extras;
     type?: EventType;
+    contexts?: Contexts;
+    breadcrumbs?: Breadcrumb[];
     // A place to stash data which is needed at some point in the SDK's event processing pipeline but which shouldn't get sent to Ribban
     sdkProcessingMetadata?: { [key: string]: any };
 }
@@ -167,3 +169,216 @@ export interface EventHint {
     originalException?: unknown;
     data?: any;
 };
+
+export type Context = Record<string, unknown>;
+
+export interface Contexts extends Record<string, Context | undefined> {
+    app?: AppContext;
+    device?: DeviceContext;
+    os?: OsContext;
+    culture?: CultureContext;
+    response?: ResponseContext;
+    cloud_resource?: CloudResourceContext;
+    state?: StateContext;
+    profile?: ProfileContext;
+}
+
+export interface StateContext extends Record<string, unknown> {
+    state: {
+        type: string;
+        value: Record<string, unknown>;
+    };
+}
+
+export interface AppContext extends Record<string, unknown> {
+    app_name?: string;
+    app_start_time?: string;
+    app_version?: string;
+    app_identifier?: string;
+    build_type?: string;
+    app_memory?: number;
+    free_memory?: number;
+}
+
+export interface DeviceContext extends Record<string, unknown> {
+    name?: string;
+    family?: string;
+    model?: string;
+    model_id?: string;
+    arch?: string;
+    battery_level?: number;
+    orientation?: 'portrait' | 'landscape';
+    manufacturer?: string;
+    brand?: string;
+    screen_resolution?: string;
+    screen_height_pixels?: number;
+    screen_width_pixels?: number;
+    screen_density?: number;
+    screen_dpi?: number;
+    online?: boolean;
+    charging?: boolean;
+    low_memory?: boolean;
+    simulator?: boolean;
+    memory_size?: number;
+    free_memory?: number;
+    usable_memory?: number;
+    storage_size?: number;
+    free_storage?: number;
+    external_storage_size?: number;
+    external_free_storage?: number;
+    boot_time?: string;
+    processor_count?: number;
+    cpu_description?: string;
+    processor_frequency?: number;
+    device_type?: string;
+    battery_status?: string;
+    device_unique_identifier?: string;
+    supports_vibration?: boolean;
+    supports_accelerometer?: boolean;
+    supports_gyroscope?: boolean;
+    supports_audio?: boolean;
+    supports_location_service?: boolean;
+}
+
+export interface OsContext extends Record<string, unknown> {
+    name?: string;
+    version?: string;
+    build?: string;
+    kernel_version?: string;
+}
+
+export interface CultureContext extends Record<string, unknown> {
+    calendar?: string;
+    display_name?: string;
+    locale?: string;
+    is_24_hour_format?: boolean;
+    timezone?: string;
+}
+
+export interface ResponseContext extends Record<string, unknown> {
+    type?: string;
+    cookies?: string[][] | Record<string, string>;
+    headers?: Record<string, string>;
+    status_code?: number;
+    body_size?: number; // in bytes
+}
+
+
+export interface CloudResourceContext extends Record<string, unknown> {
+    ['cloud.provider']?: string;
+    ['cloud.account.id']?: string;
+    ['cloud.region']?: string;
+    ['cloud.availability_zone']?: string;
+    ['cloud.platform']?: string;
+    ['host.id']?: string;
+    ['host.type']?: string;
+}
+
+export interface ProfileContext extends Record<string, unknown> {
+    profile_id: string;
+}
+
+
+/**
+ * Sentry uses breadcrumbs to create a trail of events that happened prior to an issue.
+ * These events are very similar to traditional logs but can record more rich structured data.
+ *
+ * @link https://develop.sentry.dev/sdk/event-payloads/breadcrumbs/
+ */
+export interface Breadcrumb {
+    /**
+     * By default, all breadcrumbs are recorded as default, which makes them appear as a Debug entry, but Sentry provides
+     * other types that influence how the breadcrumbs are rendered. For more information, see the description of
+     * recognized breadcrumb types.
+     *
+     * @summary The type of breadcrumb.
+     * @link https://develop.sentry.dev/sdk/event-payloads/breadcrumbs/#breadcrumb-types
+     */
+    type?: string;
+
+    /**
+     * Allowed values are, from highest to lowest:
+     * `fatal`, `error`, `warning`, `info`, and `debug`.
+     * Levels are used in the UI to emphasize and deemphasize the crumb. The default is `info`.
+     *
+     * @summary This defines the severity level of the breadcrumb.
+     */
+    level?: SeverityLevel;
+
+    event_id?: string;
+
+    /**
+     * Typically it is a module name or a descriptive string. For instance, `ui.click` could be used to
+     * indicate that a click happened in the UI or flask could be used to indicate that the event originated in
+     * the Flask framework.
+     * @private Internally we render some crumbs' color and icon based on the provided category.
+     *          For more information, see the description of recognized breadcrumb types.
+     * @summary A dotted string indicating what the crumb is or from where it comes.
+     * @link    https://develop.sentry.dev/sdk/event-payloads/breadcrumbs/#breadcrumb-types
+     */
+    category?: string;
+
+    /**
+     * If a message is provided, it is rendered as text with all whitespace preserved.
+     *
+     * @summary Human-readable message for the breadcrumb.
+     */
+    message?: string;
+
+    /**
+     * Contains a dictionary whose contents depend on the breadcrumb type.
+     * Additional parameters that are unsupported by the type are rendered as a key/value table.
+     *
+     * @summary Arbitrary data associated with this breadcrumb.
+     */
+    data?: { [key: string]: any };
+
+    /**
+     * The format is a numeric (integer or float) value representing
+     * the number of seconds that have elapsed since the Unixepoch.
+     * Breadcrumbs are most useful when they include a timestamp, as it creates a timeline
+     * leading up to an event expection/error.
+     *
+     * @note The API supports a string as defined in RFC 3339, but the SDKs only support a numeric value for now.
+     *
+     * @summary A timestamp representing when the breadcrumb occurred.
+     * @link https://develop.sentry.dev/sdk/event-payloads/breadcrumbs/#:~:text=is%20info.-,timestamp,-(recommended)
+     */
+    timestamp?: number;
+}
+
+/** JSDoc */
+export interface BreadcrumbHint {
+    [key: string]: any;
+}
+
+export interface FetchBreadcrumbData {
+    method: string;
+    url: string;
+    status_code?: number;
+    request_body_size?: number;
+    response_body_size?: number;
+}
+
+export interface XhrBreadcrumbData {
+    method?: string;
+    url?: string;
+    status_code?: number;
+    request_body_size?: number;
+    response_body_size?: number;
+}
+
+export interface FetchBreadcrumbHint {
+    input: any[];
+    data?: unknown;
+    response?: unknown;
+    startTimestamp: number;
+    endTimestamp: number;
+}
+
+export interface XhrBreadcrumbHint {
+    xhr: unknown;
+    input: unknown;
+    startTimestamp: number;
+    endTimestamp: number;
+}

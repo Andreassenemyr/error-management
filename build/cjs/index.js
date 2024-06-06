@@ -11,10 +11,22 @@ function captureException(
     exception,
     hint,
 ) {
-    console.log('We got exception', exception.message);
-
     return currentScopes.getCurrentScope().captureException(exception, prepareEvent.parseEventHintOrCaptureContext(hint));
 }
 
+function captureEvent(event, hint) {
+    return currentScopes.getCurrentScope().captureEvent(event, hint);
+}
+
+function captureMessage(
+    message,
+    level,
+    hint,
+) {
+    return currentScopes.getCurrentScope().captureMessage(message, level, prepareEvent.parseEventHintOrCaptureContext(hint));
+}
+
+exports.captureEvent = captureEvent;
 exports.captureException = captureException;
+exports.captureMessage = captureMessage;
 //# sourceMappingURL=index.js.map

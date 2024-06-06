@@ -3,6 +3,7 @@ import { Client, exceptionFromError, parseStackFrames } from "../client";
 import { Event, EventHint } from "../types";
 import { Mechanism } from "../types/mechanism";
 import { StackParser } from "../types/stacktrace"
+import { addExceptionMechanism, addExceptionTypeValue } from "./misc";
 import { normalizeToSize } from "./normalize";
 import { extractExceptionKeysForMessage, isError, isErrorEvent, isPlainObject } from "./object";
 

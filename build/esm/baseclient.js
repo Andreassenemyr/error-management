@@ -245,6 +245,8 @@ class BaseClient {
                 'log',
             ));
         }
+        console.log('Preprepared event: ', event);
+
         return this._prepareEvent(event, hint, currentScope).then((prepared) => {
             if (prepared === null) {
                 throw new RibbanError('An event processor returned null, will not send event.', 'log');
@@ -254,6 +256,8 @@ class BaseClient {
             if (isInternalException) {
                 return prepared;
             }
+
+            console.log('Prepared event: ', prepared);
 
             const result = processBeforeSend(options, prepared);
             return _validateBeforeSendResult(result, beforeSendLabel);

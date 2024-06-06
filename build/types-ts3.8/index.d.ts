@@ -1,7 +1,7 @@
 import { Client } from "./client";
 export { init } from "./init";
 import { RequestSession } from "./session";
-import { EventHint } from "./types";
+import { Event, EventHint, SeverityLevel } from "./types";
 export type CaptureContext = Scope | Partial<ScopeContext> | ((scope: Scope) => Scope);
 export type ExclusiveEventHintOrCaptureContext = (CaptureContext & Partial<{
     [key in keyof EventHint]: never;
@@ -38,10 +38,14 @@ export interface Scope {
      * Sets the `RequestSession` on the scope
      */
     setRequestSession(requestSession?: RequestSession): this;
-    captureException(exception: unknown, hint?: unknown): string;
+    captureException(exception: unknown, hint?: EventHint): string;
+    captureMessage(message: string, level?: SeverityLevel, hint?: EventHint): string;
+    captureEvent(event: Event, hint?: EventHint): string;
     getClient<C extends Client>(): C | undefined;
     setClient(client: Client | undefined): void;
     clone(): Scope;
 }
 export declare function captureException(exception: any, hint?: ExclusiveEventHintOrCaptureContext): string;
+export declare function captureEvent(event: Event, hint?: EventHint): string;
+export declare function captureMessage(message: string, level?: SeverityLevel, hint?: ExclusiveEventHintOrCaptureContext): string;
 //# sourceMappingURL=index.d.ts.map

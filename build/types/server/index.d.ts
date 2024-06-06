@@ -1,5 +1,6 @@
-import { BrowserOptions } from '../client';
+import { NodeOptions } from '../node/types';
 export { withRibbanConfig } from '../config';
-export { captureException } from '../index';
-export declare function init(options: BrowserOptions): void;
+export declare function init(options: NodeOptions): void;
+export * from '../node/types';
+export * from '../index';
 //# sourceMappingURL=index.d.ts.map
